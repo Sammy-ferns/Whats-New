@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+body {
+  background-color: lightgrey;
+}
+
+button {
+  background-color: black;
+}
+
+.card-body {
+  flex-basis: 13rem;
+}
