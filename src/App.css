@@ -38,7 +38,7 @@
 }
 
 body {
-  background-color: lightgrey;
+  background-color: rgb(185, 140, 140);
 }
 
 button {
@@ -47,4 +47,8 @@ button {
 
 .card-body {
   flex-basis: 13rem;
+}
+
+.navbar {
+  background-color: black;
 }

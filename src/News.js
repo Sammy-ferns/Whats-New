@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import NewsItem from "./NewsItem";
 import PropTypes from "prop-types";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export class News extends Component {
   static defaultProps = {
@@ -15,14 +16,38 @@ export class News extends Component {
     category: PropTypes.string,
   };
 
-  constructor() {
-    super();
+  // static capitalizeFirstLetter(string) {
+  //   return string.charAt(0).toUpperCase() + string.slice(1);
+  // }
+
+  constructor(props) {
+    super(props);
     console.log("I am a constructor from News Component");
     this.state = {
       articles: [],
       loading: false,
       page: 1,
+      totalResults: 0,
     };
+    document.title = `${this.props.category} - What's New`;
+  }
+
+  async updateNews() {
+    const url = `https://newsapi.org/v2/top-headlines?country=${
+      this.props.country
+    }&category=${
+      this.props.category
+    }&apiKey=b2004c55fb0041a2b2dd60e07d0fb4e9&page=${
+      this.state.page + 1
+    }&pageSize=${this.props.pageSize}`;
+    this.setState({ loading: true });
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    this.setState({
+      articles: parsedData.articles,
+      totslResults: parsedData.totalResults,
+      loading: false,
+    });
   }
 
   async componentDidMount() {
@@ -90,12 +115,23 @@ export class News extends Component {
     }
   };
 
+  // fetchMoreData = () => {
+  //   this.setState({ page: this.state.page + 1 });
+  //   this.updateNews();
+  // };
+
   render() {
     return (
       <div className="container my-3">
         <h2 className="text-center">What's New - Top Headlines</h2>
 
         <div className="row">
+          <InfiniteScroll
+            dataLength={this.state.articles.length}
+            next={this.fetchMoreData}
+            hasMore={this.state.articles.length !== this.state.totalResults}
+            // loader={<h4>Loading...</h4>}
+          />
           {this.state.articles.map((element) => {
             return (
               <div className="col-md-3" key={element.url}>
@@ -106,6 +142,9 @@ export class News extends Component {
                   }
                   imageUrl={element.urlToImage}
                   newsUrl={element.url}
+                  author={element.author}
+                  date={element.publishedAt}
+                  source={element.source.name}
                 />
               </div>
             );
